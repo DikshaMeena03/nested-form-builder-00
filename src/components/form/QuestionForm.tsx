@@ -3,7 +3,7 @@ import { Question, FormState } from "@/types/question";
 import QuestionCard from "./QuestionCard";
 import AddQuestionButton from "./AddQuestionButton";
 import FormPreview from "./FormPreview";
-import { Send, RotateCcw } from "lucide-react";
+import { Send, RotateCcw, Layers, Sparkles } from "lucide-react";
 
 // Utility function to generate unique IDs
 const generateId = () => Math.random().toString(36).substring(2, 11);
@@ -129,7 +129,7 @@ const QuestionForm = () => {
   return (
     <div className="space-y-6">
       {/* Question Cards */}
-      <div className="space-y-4">
+      <div className="space-y-5">
         {formState.questions.map((question, index) => (
           <QuestionCard
             key={question.id}
@@ -144,15 +144,17 @@ const QuestionForm = () => {
 
       {/* Empty State */}
       {!hasQuestions && !formState.isSubmitted && (
-        <div className="text-center py-12 px-4">
-          <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-            <Send className="w-7 h-7 text-primary" />
+        <div className="text-center py-16 px-4 animate-fade-in">
+          <div className="relative inline-flex items-center justify-center w-20 h-20 rounded-2xl mb-6 animate-float"
+               style={{ background: 'var(--gradient-primary)' }}>
+            <Layers className="w-10 h-10 text-primary-foreground" />
+            <Sparkles className="w-5 h-5 text-primary-foreground absolute -top-2 -right-2 animate-pulse" />
           </div>
-          <h3 className="text-lg font-semibold text-foreground mb-2">
+          <h3 className="text-xl font-bold gradient-text mb-3">
             No questions yet
           </h3>
-          <p className="text-muted-foreground mb-6 max-w-sm mx-auto">
-            Start building your form by adding your first question
+          <p className="text-muted-foreground mb-8 max-w-sm mx-auto">
+            Start building your interactive form by adding your first question
           </p>
           <AddQuestionButton onClick={handleAddQuestion} />
         </div>
@@ -160,27 +162,27 @@ const QuestionForm = () => {
 
       {/* Add Question Button (when questions exist) */}
       {hasQuestions && (
-        <div className="flex flex-col sm:flex-row gap-3">
+        <div className="flex flex-col sm:flex-row gap-4">
           <AddQuestionButton onClick={handleAddQuestion} />
         </div>
       )}
 
       {/* Action Buttons */}
       {hasQuestions && (
-        <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t border-border">
+        <div className="flex flex-col sm:flex-row gap-4 pt-6 border-t border-border/50">
           <button
             onClick={handleSubmit}
             disabled={!canSubmit}
-            className="btn-primary flex-1 sm:flex-none inline-flex items-center justify-center gap-2"
+            className="btn-primary flex-1 sm:flex-none inline-flex items-center justify-center gap-2 group interactive-btn"
           >
-            <Send className="w-4 h-4" />
+            <Send className="w-5 h-5 transition-transform group-hover:translate-x-1" />
             <span>Submit Form</span>
           </button>
           <button
             onClick={handleReset}
-            className="btn-secondary flex-1 sm:flex-none inline-flex items-center justify-center gap-2"
+            className="btn-secondary flex-1 sm:flex-none inline-flex items-center justify-center gap-2 group"
           >
-            <RotateCcw className="w-4 h-4" />
+            <RotateCcw className="w-5 h-5 transition-transform group-hover:-rotate-180 duration-500" />
             <span>Reset Form</span>
           </button>
         </div>
