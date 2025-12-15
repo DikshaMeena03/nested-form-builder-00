@@ -1,5 +1,5 @@
 import { Question } from "@/types/question";
-import { Trash2, GripVertical } from "lucide-react";
+import { Trash2, GripVertical, ChevronRight } from "lucide-react";
 import QuestionTypeDropdown from "./QuestionTypeDropdown";
 import TrueFalseToggle from "./TrueFalseToggle";
 import AddQuestionButton from "./AddQuestionButton";
@@ -39,14 +39,20 @@ const QuestionCard = ({
     <div className="animate-fade-in">
       <div className="question-card group">
         {/* Card Header */}
-        <div className="flex items-start justify-between gap-3 mb-4">
-          <div className="flex items-center gap-2">
-            <GripVertical className="w-4 h-4 text-muted-foreground/50 cursor-grab hidden sm:block" />
-            <span className="question-number">{questionNumber}</span>
+        <div className="flex items-start justify-between gap-3 mb-5">
+          <div className="flex items-center gap-3">
+            <GripVertical className="w-5 h-5 text-muted-foreground/40 cursor-grab hidden sm:block hover:text-muted-foreground transition-colors" />
+            <span className="question-number shadow-sm">{questionNumber}</span>
+            {depth > 0 && (
+              <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                <ChevronRight className="w-3 h-3" />
+                <span>Child of {questionNumber.split('.').slice(0, -1).join('.')}</span>
+              </div>
+            )}
           </div>
           <button
             onClick={() => onDelete(question.id)}
-            className="btn-destructive opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity"
+            className="btn-destructive opacity-0 group-hover:opacity-100 focus:opacity-100 transition-all duration-300"
             aria-label="Delete question"
           >
             <Trash2 className="w-4 h-4" />
@@ -54,8 +60,8 @@ const QuestionCard = ({
         </div>
 
         {/* Question Text */}
-        <div className="mb-4">
-          <label htmlFor={`question-${question.id}`} className="label-text block mb-1.5">
+        <div className="mb-5">
+          <label htmlFor={`question-${question.id}`} className="label-text block mb-2">
             Question Text
           </label>
           <input
@@ -69,7 +75,7 @@ const QuestionCard = ({
         </div>
 
         {/* Question Type & Answer */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
           <QuestionTypeDropdown
             value={question.type}
             onChange={handleTypeChange}
@@ -85,7 +91,7 @@ const QuestionCard = ({
 
         {/* Add Child Button */}
         {showAddChild && (
-          <div className="mt-4 pt-4 border-t border-border animate-fade-in">
+          <div className="mt-5 pt-5 border-t border-border/50 animate-fade-in">
             <AddQuestionButton
               onClick={() => onAddChild(question.id)}
               variant="secondary"
@@ -97,7 +103,7 @@ const QuestionCard = ({
 
       {/* Nested Children */}
       {question.children.length > 0 && (
-        <div className="hierarchy-line mt-3 space-y-3 animate-fade-in">
+        <div className="hierarchy-line mt-4 space-y-4 animate-fade-in">
           {question.children.map((child, index) => (
             <QuestionCard
               key={child.id}
