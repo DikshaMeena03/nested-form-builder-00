@@ -37,7 +37,7 @@ const QuestionCard = ({
 
   return (
     <div className="animate-fade-in">
-      <div className="question-card group">
+      <div className="question-card group hover-lift glass-effect">
         {/* Card Header */}
         <div className="flex items-start justify-between gap-3 mb-5">
           <div className="flex items-center gap-3">

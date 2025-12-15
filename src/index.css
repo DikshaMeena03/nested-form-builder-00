@@ -58,9 +58,10 @@
     --gradient-secondary: linear-gradient(135deg, hsl(210 40% 96%), hsl(214 32% 91%));
     --gradient-success: linear-gradient(135deg, hsl(142 76% 36%), hsl(160 84% 39%));
     --gradient-destructive: linear-gradient(135deg, hsl(0 84% 60%), hsl(15 84% 57%));
-    --gradient-hero: linear-gradient(135deg, hsl(217 91% 60% / 0.1), hsl(250 91% 65% / 0.05));
+    --gradient-hero: linear-gradient(135deg, hsl(220 90% 96%), hsl(250 80% 95%), hsl(280 70% 96%), hsl(210 85% 96%));
     --gradient-card: linear-gradient(180deg, hsl(0 0% 100%), hsl(210 40% 98%));
     --gradient-glow: linear-gradient(135deg, hsl(217 91% 60% / 0.2), hsl(250 91% 65% / 0.1));
+    --gradient-animated: linear-gradient(-45deg, hsl(217 91% 95%), hsl(250 91% 95%), hsl(280 80% 96%), hsl(320 70% 96%), hsl(217 91% 95%));
   }
 
   .dark {
@@ -101,6 +102,7 @@
     --gradient-card: linear-gradient(180deg, hsl(217 33% 17%), hsl(217 33% 15%));
     --gradient-hero: linear-gradient(135deg, hsl(217 91% 60% / 0.15), hsl(250 91% 65% / 0.08));
     --gradient-glow: linear-gradient(135deg, hsl(217 91% 60% / 0.3), hsl(250 91% 65% / 0.15));
+    --gradient-animated: linear-gradient(-45deg, hsl(222 47% 15%), hsl(250 50% 18%), hsl(280 40% 16%), hsl(217 47% 14%), hsl(222 47% 15%));
   }
 }
 
@@ -112,8 +114,10 @@
   body {
     @apply bg-background text-foreground font-sans antialiased;
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
-    background: var(--gradient-hero);
-    background-attachment: fixed;
+    background: var(--gradient-animated);
+    background-size: 400% 400%;
+    animation: gradientShift 15s ease infinite;
+    min-height: 100vh;
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -371,5 +375,50 @@
     100% {
       background-position: 200% 0;
     }
+  }
+
+  @keyframes gradientShift {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+
+  @keyframes bounce-soft {
+    0%, 100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-4px);
+    }
+  }
+
+  .animate-bounce-soft {
+    animation: bounce-soft 2s ease-in-out infinite;
+  }
+
+  .hover-lift {
+    @apply transition-all duration-300;
+  }
+
+  .hover-lift:hover {
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 0 20px 40px -10px hsl(217 91% 60% / 0.2);
+  }
+
+  .glass-effect {
+    background: hsl(0 0% 100% / 0.7);
+    backdrop-filter: blur(12px);
+    border: 1px solid hsl(0 0% 100% / 0.5);
+  }
+
+  .dark .glass-effect {
+    background: hsl(217 33% 17% / 0.7);
+    border: 1px solid hsl(217 33% 25% / 0.5);
   }
 }
