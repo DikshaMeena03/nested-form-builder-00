@@ -1,5 +1,6 @@
 import { Question } from "@/types/question";
 import { Trash2, GripVertical, ChevronRight } from "lucide-react";
+import { DraggableProvidedDragHandleProps } from "@hello-pangea/dnd";
 import QuestionTypeDropdown from "./QuestionTypeDropdown";
 import TrueFalseToggle from "./TrueFalseToggle";
 import AddQuestionButton from "./AddQuestionButton";
@@ -11,6 +12,9 @@ interface QuestionCardProps {
   onUpdate: (id: string, updates: Partial<Question>) => void;
   onDelete: (id: string) => void;
   onAddChild: (parentId: string) => void;
+  // Drag handle props - only passed for parent questions
+  dragHandleProps?: DraggableProvidedDragHandleProps | null;
+  isDragging?: boolean;
 }
 
 const QuestionCard = ({
@@ -20,6 +24,8 @@ const QuestionCard = ({
   onUpdate,
   onDelete,
   onAddChild,
+  dragHandleProps,
+  isDragging,
 }: QuestionCardProps) => {
   const handleTextChange = (text: string) => {
     onUpdate(question.id, { text });
@@ -35,13 +41,29 @@ const QuestionCard = ({
 
   const showAddChild = question.type === "true-false" && question.answer === true;
 
+  // Check if this is a parent-level question (has drag handle)
+  const isParent = depth === 0;
+
   return (
     <div className="animate-fade-in">
-      <div className="question-card group hover-lift glass-effect">
+      <div className={`question-card group hover-lift glass-effect transition-all duration-200 ${
+        isDragging ? "ring-2 ring-primary shadow-2xl scale-[1.02]" : ""
+      }`}>
         {/* Card Header */}
         <div className="flex items-start justify-between gap-3 mb-5">
           <div className="flex items-center gap-3">
-            <GripVertical className="w-5 h-5 text-muted-foreground/40 cursor-grab hidden sm:block hover:text-muted-foreground transition-colors" />
+            {/* Drag handle - only functional for parent questions */}
+            {isParent && dragHandleProps ? (
+              <div
+                {...dragHandleProps}
+                className="p-1 rounded hover:bg-muted/50 cursor-grab active:cursor-grabbing transition-colors touch-none"
+                title="Drag to reorder"
+              >
+                <GripVertical className="w-5 h-5 text-muted-foreground hover:text-foreground transition-colors" />
+              </div>
+            ) : (
+              <GripVertical className="w-5 h-5 text-muted-foreground/20 hidden sm:block" />
+            )}
             <span className="question-number shadow-sm">{questionNumber}</span>
             {depth > 0 && (
               <div className="flex items-center gap-1 text-xs text-muted-foreground">

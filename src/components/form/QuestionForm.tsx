@@ -1,5 +1,6 @@
 import { useState, useCallback } from "react";
 import { Question, FormState } from "@/types/question";
+import { DragDropContext, Droppable, Draggable, DropResult } from "@hello-pangea/dnd";
 import QuestionCard from "./QuestionCard";
 import AddQuestionButton from "./AddQuestionButton";
 import FormPreview from "./FormPreview";
@@ -111,6 +112,23 @@ const QuestionForm = () => {
     [addChildToQuestion]
   );
 
+  // Handle drag end - reorder parent questions only
+  const handleDragEnd = useCallback((result: DropResult) => {
+    const { destination, source } = result;
+    
+    // If no destination or dropped in same position, do nothing
+    if (!destination || destination.index === source.index) {
+      return;
+    }
+
+    setFormState((prev) => {
+      const newQuestions = Array.from(prev.questions);
+      const [removed] = newQuestions.splice(source.index, 1);
+      newQuestions.splice(destination.index, 0, removed);
+      return { ...prev, questions: newQuestions, isSubmitted: false };
+    });
+  }, []);
+
   // Submit handler
   const handleSubmit = useCallback(() => {
     setSubmittedQuestions([...formState.questions]);
@@ -128,19 +146,45 @@ const QuestionForm = () => {
 
   return (
     <div className="space-y-6">
-      {/* Question Cards */}
-      <div className="space-y-5">
-        {formState.questions.map((question, index) => (
-          <QuestionCard
-            key={question.id}
-            question={question}
-            questionNumber={`Q${index + 1}`}
-            onUpdate={handleUpdateQuestion}
-            onDelete={handleDeleteQuestion}
-            onAddChild={handleAddChild}
-          />
-        ))}
-      </div>
+      {/* Question Cards with Drag & Drop */}
+      <DragDropContext onDragEnd={handleDragEnd}>
+        <Droppable droppableId="parent-questions">
+          {(provided, snapshot) => (
+            <div
+              ref={provided.innerRef}
+              {...provided.droppableProps}
+              className={`space-y-5 transition-colors duration-200 rounded-xl ${
+                snapshot.isDraggingOver ? "bg-primary/5" : ""
+              }`}
+            >
+              {formState.questions.map((question, index) => (
+                <Draggable key={question.id} draggableId={question.id} index={index}>
+                  {(provided, snapshot) => (
+                    <div
+                      ref={provided.innerRef}
+                      {...provided.draggableProps}
+                      className={`transition-shadow duration-200 ${
+                        snapshot.isDragging ? "shadow-2xl z-50" : ""
+                      }`}
+                    >
+                      <QuestionCard
+                        question={question}
+                        questionNumber={`Q${index + 1}`}
+                        onUpdate={handleUpdateQuestion}
+                        onDelete={handleDeleteQuestion}
+                        onAddChild={handleAddChild}
+                        dragHandleProps={provided.dragHandleProps}
+                        isDragging={snapshot.isDragging}
+                      />
+                    </div>
+                  )}
+                </Draggable>
+              ))}
+              {provided.placeholder}
+            </div>
+          )}
+        </Droppable>
+      </DragDropContext>
 
       {/* Empty State */}
       {!hasQuestions && !formState.isSubmitted && (
